@@ -94,7 +94,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [test-frontend]
+          keys: [frontend-build]
       # Your job code here
       - run:
           name: Run frontend test
@@ -112,7 +112,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [test-backend]
+          keys: [backend-build]
       # Your job code here
       - run:
           name: Run backend test
@@ -130,7 +130,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [scan-frontend]
+          keys: [frontend-build]
       # Your job code here
       - run: 
           name: Scan frontend
@@ -150,7 +150,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache: 
-          keys: [scan-backend]
+          keys: [backend-build]
       # Your job code here
       - run:
           name: Scan backend
@@ -228,12 +228,12 @@ jobs:
       # Checkout code from git
       - checkout
       - restore_cache:
-          keys: [run-migrations]
+          keys: [backend-build]
       - install-awscli
       - run:
           name: Install nodejs
           command: |
-            curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
             sudo apt install -y nodejs
             sudo npm install --global n
             sudo n 13.8.0
@@ -264,12 +264,12 @@ jobs:
       # Checkout code from git
       - checkout
       - restore_cache:
-          keys: [deploy-frontend]
+          keys: [backend-build]
       - install-awscli
       - run:
           name: Install nodeJS
           command: |
-            curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
             sudo apt install -y nodejs tar
             sudo npm install --global n
             sudo n 13.8.0
@@ -310,7 +310,7 @@ jobs:
   #     - install-ansible
   #     - install-awscli
   #     - restore_cache:
-  #         keys: [deploy-backend]
+  #         keys: [backend-build]
   #     - attach_workspace:
   #         at: ~/
   #     - run:
