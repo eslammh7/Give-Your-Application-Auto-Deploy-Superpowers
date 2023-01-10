@@ -34,7 +34,23 @@ commands:
               npm install
               npm run migration:revert
             fi
-            
+
+  install-awscli:
+    steps:
+      - run:
+          name: Install amazon awscli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
+  install-ansible:
+    steps:
+      - run: 
+          name: Install ansible
+          command: |
+            python3 -m pip install --user ansible
+
 jobs:
   build-frontend:
     docker:
@@ -192,16 +208,8 @@ jobs:
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: ["07:6d:ba:4b:76:e9:df:e6:97:3b:92:96:ef:69:78:7b"]
-      - run: 
-          name: Install ansible
-          command: |
-            python3 -m pip install --user ansible
-      - run:
-          name: Install amazon awscli
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+      - install-ansible
+      - install-awscli
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -221,12 +229,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: [run-migrations]
-      - run:
-          name: Install amazon awscli
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+      - install-awscli
       - run:
           name: Run migrations
           command: |
@@ -249,26 +252,24 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      - image: cimg/python:3.10
     steps:
       # Checkout code from git
       - checkout
       - restore_cache:
           keys: [deploy-frontend]
+      - install-awscli
       - run:
           name: Install nodeJS
           command: |
-            apt install -y nodejs tar
-            npm install --global n
-            n 13.8.0
+            sudo apt install -y nodejs tar
+            sudo npm install --global n
+            sudo n 13.8.0
       - run:
           name: Install python3
           command: |
             apt install python3.8
-      - run: 
-          name: Install ansible
-          command: |
-            python3 -m pip install --user ansible
+      - install-ansible
       - run:
           name: Get backend url
           command: |
