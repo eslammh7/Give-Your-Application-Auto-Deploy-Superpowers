@@ -27,7 +27,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$( curl --insecure https://kvdb.io/3PVFJ3s2wA6EWLPMw8yyGx/DBmigration_<< parameters.Workflow_ID >>)
+            SUCCESS=$( curl --insecure https://kvdb.io/VbAEMs5SH8nURnSBDPPGYV/DBmigration_<< parameters.Workflow_ID >>)
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -223,13 +223,20 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/python:3.10
     steps:
       # Checkout code from git
       - checkout
       - restore_cache:
           keys: [run-migrations]
       - install-awscli
+      - run:
+          name: Install nodejs
+          command: |
+            curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            sudo apt install -y nodejs
+            sudo npm install --global n
+            sudo n 13.8.0
       - run:
           name: Run migrations
           command: |
@@ -262,7 +269,7 @@ jobs:
       - run:
           name: Install nodeJS
           command: |
-            sudo apt -y update && sudo apt -y upgrade
+            curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs tar
             sudo npm install --global n
             sudo n 13.8.0
