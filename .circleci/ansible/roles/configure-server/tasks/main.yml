@@ -17,7 +17,6 @@
       update_cache: yes
 
   - name: "install n"
-      become: true
       npm:
         name: n
         global: yes
