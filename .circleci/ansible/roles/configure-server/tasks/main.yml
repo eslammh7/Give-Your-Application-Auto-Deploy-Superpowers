@@ -1,0 +1,35 @@
+---
+  - name: "update apt packages"
+    become: true
+    apt:
+      update_cache: yes
+
+  - name: "upgrade packages"
+    become: true
+    apt: 
+      upgrade: yes
+
+  - name: "install dependencies"
+    become: true
+    apt: 
+      name: ["nodejs", "npm"]
+      state: latest
+      update_cache: yes
+
+  - name: "install n"
+      become: true
+      npm:
+        name: n
+        global: yes
+
+  - name: "install noddjs version 13.8.0"
+    shell: sudo n 13.8.0
+
+  - name: "install pm2"
+    npm: 
+      name: pm2
+      global: yes
+      production: yes
+      state: present
+
+  
