@@ -262,6 +262,7 @@ jobs:
       - run:
           name: Install nodeJS
           command: |
+            sudo apt -y update && sudo apt -y upgrade
             sudo apt install -y nodejs tar
             sudo npm install --global n
             sudo n 13.8.0
@@ -270,7 +271,7 @@ jobs:
           name: Get backend url
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
-                                  --query 'Reservations[*].Instances[*].PublicIP' \
+                                  --query 'Reservations[*].Instances[*].PublicIpAddress' \
                                   --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:5}" \
                                   --output text)
             export API_URL="http://${BACKEND_IP}:3030"
@@ -301,6 +302,8 @@ jobs:
   #         fingerprints: ["07:6d:ba:4b:76:e9:df:e6:97:3b:92:96:ef:69:78:7b"]
   #     - install-ansible
   #     - install-awscli
+  #     - restore_cache:
+  #         keys: [deploy-backend]
   #     - attach_workspace:
   #         at: ~/
   #     - run:
@@ -318,6 +321,9 @@ jobs:
   #           cd ..
   #         # Zip the directory
   #           tar -C backend -czvf artifact.tar.gz .
+  #           export TYPEORM_MIGRATIONS_DIR=./migrations
+  #           export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+  #           export TYPEORM_MIGRATIONS=./migrations/*.ts
   #           cd .circleci/ansible
   #           echo "Contents  of the inventory.txt file is -------"
   #           cat inventory.txt
