@@ -201,7 +201,6 @@ jobs:
           command: |
             apt update && apt upgrade
             apt install curl
-            apt install python3-pycurl
       - run:
           name: Install amazon awscli
           command: |
