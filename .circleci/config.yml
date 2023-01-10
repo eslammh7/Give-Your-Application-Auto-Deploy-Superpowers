@@ -196,10 +196,10 @@ jobs:
       # attach workspace
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install tar gzip
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       yum -y install tar gzip
       - run:
           name: Install amazon awscli
           command: |
