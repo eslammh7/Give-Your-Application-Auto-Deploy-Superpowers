@@ -26,9 +26,9 @@ commands:
           default: ${CIRCLE_WORKFLOW_ID:0:5}  
     steps:
       - run:
-          name: Revert migrations
+          name: "Revert migrations"
           # Add when this will run
-            when: on_fail
+          when: on_fail
           command: |
 # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS = $( curl --insecure https://kvdb.io/3PVFJ3s2wA6EWLPMw8yyGx/DBmigration_<< parameters.Workflow_ID >>)
