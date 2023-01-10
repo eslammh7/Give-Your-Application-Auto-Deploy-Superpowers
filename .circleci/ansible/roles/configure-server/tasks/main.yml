@@ -16,13 +16,10 @@
       state: latest
       update_cache: yes
 
-  - name: "install n"
-      npm:
-        name: n
-        global: yes
-
   - name: "install noddjs version 13.8.0"
-    shell: sudo n 13.8.0
+    shell: |
+      sudo npm install --global n
+      sudo n 13.8.0
 
   - name: "install pm2"
     npm: 
