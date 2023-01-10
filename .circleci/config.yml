@@ -27,7 +27,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS = $( curl --insecure https://kvdb.io/3PVFJ3s2wA6EWLPMw8yyGx/DBmigration_<< parameters.Workflow_ID >>)
+            SUCCESS=$( curl --insecure https://kvdb.io/3PVFJ3s2wA6EWLPMw8yyGx/DBmigration_<< parameters.Workflow_ID >>)
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -238,7 +238,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/3PVFJ3s2wA6EWLPMw8yyGx/DBmigration_${CIRCLE_WORKFLOW_ID:0:5} -d '1'
+              curl --insecure https://kvdb.io/3PVFJ3s2wA6EWLPMw8yyGx/DBmigration_${CIRCLE_WORKFLOW_ID:0:5} -d '1'
             else
               echo "No migrations are pending"
             fi
@@ -246,28 +246,41 @@ jobs:
       - destroy-environment    
       - revert-migrations
 
-#   deploy-frontend:
-#     docker:
-#       # Docker image here that supports AWS CLI
-        # - image: amazon/aws-cli
-#     steps:
-#       # Checkout code from git
-        # - checkout
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Get backend url
-#           command: |
-#             # your code here
-#             export API_URL="http://${BACKEND_IP}:3030"
-#             echo "${API_URL}"
-#       - run:
-#           name: Deploy frontend objects
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure      
+  # deploy-frontend:
+  #   docker:
+  #     # Docker image here that supports AWS CLI
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     # Checkout code from git
+  #     - checkout
+  #     - run:
+  #         name: Install nodeJS
+  #         command: |
+  #           sudo apt install -y nodejs
+  #           sudo npm install --global n
+  #           sudo n 13.8.0
+  #     - run:
+  #         name: Install python3
+  #         command: |
+  #           sudo apt install python3.8
+  #     - run: 
+  #         name: Install ansible
+  #         command: |
+  #           python3 -m pip install --user ansible
+  #     - run:
+  #         name: Get backend url
+  #         command: |
+  #           export BACKEND_IP=$( aws ec2 describe-instances \
+  #                                 --query 'Reservations[*].Instances[*].PublicIP' \
+  #                                 --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:5}" \
+  #                                 --output text )
+  #           export API_URL="http://${BACKEND_IP}:3030"
+  #           echo "${API_URL}"
+  #     - run:
+  #         name: Deploy frontend objects
+  #         command: |
+  #           # your code here
+      # Here's where you will add some code to rollback on failure      
                     
 #   deploy-backend:
 #     docker:
