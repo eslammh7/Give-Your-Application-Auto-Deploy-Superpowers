@@ -200,7 +200,7 @@ jobs:
           name: Install dependencies
           command: |
             apt -y update && apt -y upgrade
-            apt -y install curl
+            apt -y install curl unzip
       - run:
           name: Install amazon awscli
           command: |
