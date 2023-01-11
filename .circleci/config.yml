@@ -322,8 +322,12 @@ jobs:
             cd backend
             npm i
             npm run build
+            tar -czf artifact.tar.gz dist/* package*
             cd ..
-            tar -C backend -czvf artifact.tar.gz .
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -383,11 +387,11 @@ jobs:
   # cloudfront-update:
   #   docker:
   #     # Docker image here that supports AWS CLI
-  #       - image: amazon/aws-cli
+  #     - image: amazon/aws-cli
   #   steps:
   #     # Checkout code from git
-  #       - checkout
-        # - install-nodejs
+  #     - checkout
+  #     - install-nodejs
   #     # - run:
   #     #     name: Install dependencies
   #     #     command: |
@@ -399,12 +403,16 @@ jobs:
   #                                 list-exports --query "Exports[?Name==\'WorkflowID\'.Value" \
   #                                 --no-paginate --output text)
   #           echo $OldWorkflowID >> ~/OldWorkflowID.txt
+  #           cat ~/OldWorkflowID.txt
 
   #           aws cloudformation deploy \
   #               --template-file .circleci/files/cloudfront.yml \
   #               --stack-name InitialStack-${OldWorkflowID} \
   #               --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:5}" \
   #               --tags project=udapeople
+
+  #           echo OldWorkflowID: "${OldWorkflowID}"
+  #           echo current workflow id: "${CIRCLE_WORKFLOW_ID:0:5}"
   #     # Here's where you will add some code to rollback on failure 
   #     - destroy-environment
   #     - revert-migrations 
@@ -412,21 +420,33 @@ jobs:
 # cleanup:
 #     docker:
 #       # Docker image here
+#       - image: amazon/aws-cli
 #     steps:
 #       # Checkout code from git
-#         - checkout
+#       - checkout
 #       - run:
 #           name: Get old stack workflow id
 #           command: |
-#             # your code here
-#             export OldWorkflowID="the id here"
-#             export STACKS=[] #put the list of stacks here
+# # Fetch the Old workflow ID
+#             export OldWorkflowID=$(aws cloudformation \
+#                     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+#                     --no-paginate --output text)
+#             echo OldWorkflowID "${OldWorkflowID}"
+#             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+# # Fetch the stack names          
+#             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+#                     --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+#             echo Stack names "${STACKS[@]}"          
+# # export OldWorkflowID="the id here"
+# # export STACKS=[] #put the list of stacks here
 #       - run:
 #           name: Remove old stacks and files
 #           command: |
 #             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
 #             then
-#               # your code here
+#               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+#               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+#               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
 #             fi
             
 
