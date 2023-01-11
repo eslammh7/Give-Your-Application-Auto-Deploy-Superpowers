@@ -345,12 +345,12 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      - install-awscli
-      - install-nodejs
       - run:
           name: Install dependencies
           command: |
             sudo apt install -y tar curl
+      - install-awscli
+      - install-nodejs
       - run:
           name: Get backend url
           command: |
