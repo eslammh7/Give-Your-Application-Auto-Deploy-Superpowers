@@ -4,11 +4,11 @@
       path: ~/backend
       state: directory
 
-  # - name: "Copy backend files"
-  #   copy:
-  #     src: artifact.tar.gz
-  #     dest: ~/backend
-  #     backup: yes
+  - name: "Copy backend files"
+    copy:
+      src: artifact.tar.gz
+      dest: ~/backend
+      backup: yes
 
   - name: "Unarchive backend files"
     unarchive:
