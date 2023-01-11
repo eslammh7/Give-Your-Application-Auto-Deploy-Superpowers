@@ -6,7 +6,7 @@
 
 - name: "Copy backend files"
   copy:
-    src: .circleci/ansible/roles/deploy/files/artifact.tar.gz
+    src: artifact.tar.gz
     dest: ~/backend
     backup: yes
 
