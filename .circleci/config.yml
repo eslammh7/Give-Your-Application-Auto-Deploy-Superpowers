@@ -51,6 +51,16 @@ commands:
           command: |
             python3 -m pip install --user ansible
 
+  install-nodejs:
+    steps:
+      - run:
+          name: Install NodeJS
+          command: |
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+            sudo apt install -y nodejs
+            sudo npm install --global n
+            sudo n 13.8.0
+
 jobs:
   build-frontend:
     docker:
@@ -230,13 +240,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - install-awscli
-      - run:
-          name: Install nodejs
-          command: |
-            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            sudo apt install -y nodejs
-            sudo npm install --global n
-            sudo n 13.8.0
+      - install-nodejs
       - run:
           name: Run migrations
           command: |
@@ -266,13 +270,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - install-awscli
-      - run:
-          name: Install nodeJS
-          command: |
-            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            sudo apt install -y nodejs tar
-            sudo npm install --global n
-            sudo n 13.8.0
+      - install-nodejs
       - install-ansible
       - run:
           name: Get backend url
@@ -313,13 +311,11 @@ jobs:
           keys: [backend-build]
       - attach_workspace:
           at: ~/
+      - install-nodejs
       - run:
           name: Install dependencies
           command: |
-            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            sudo apt install -y tar gzip nodejs
-            sudo npm install --global n
-            sudo n 13.8.0
+            sudo apt install -y tar gzip 
       - run:
           name: Deploy backend
           command: |
@@ -343,14 +339,14 @@ jobs:
   #   steps:
   #     # Checkout code from git
   #     - checkout
+      # - restore_cache:
+      #     keys: [backend-build]
   #     - install-awscli
+      # - install-nodejs
   #     - run:
-  #         name: Install nodeJS
+  #         name: Install dependencies
   #         command: |
-  #           curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-  #           sudo apt install -y nodejs tar
-  #           sudo npm install --global n
-  #           sudo n 13.8.0
+  #           sudo apt install -y tar
   #     - run:
   #         name: Get backend url
   #         command: |
@@ -376,7 +372,6 @@ jobs:
   #           echo ${URL} 
   #           if curl -s ${URL} | grep "Welcome"
   #           then
-  #               # Change this to 0 after the job fails
   #             return 1
   #           else
   #             return 1
@@ -392,6 +387,7 @@ jobs:
   #   steps:
   #     # Checkout code from git
   #       - checkout
+        # - install-nodejs
   #     # - run:
   #     #     name: Install dependencies
   #     #     command: |
