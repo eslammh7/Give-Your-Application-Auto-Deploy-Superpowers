@@ -358,6 +358,7 @@ jobs:
                                   --query 'Reservations[*].Instances[*].PublicIpAddress' \
                                   --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:5}" \
                                   --output text)
+            echo "${BACKEND_IP}"
       - run:
           name: Backend smoke test.
           command: |
